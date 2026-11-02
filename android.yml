@@ -31,6 +31,9 @@ jobs:
 
       - name: Force Override All Android Icons
         run: |
+          # Remove adaptive icon XMLs which force the use of default vectors
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+
           # Overwrite every mipmap folder with the custom icons
           for d in android/app/src/main/res/mipmap-*; do
             if [ -d "$d" ]; then
