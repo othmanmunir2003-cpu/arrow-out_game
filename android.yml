@@ -29,14 +29,17 @@ jobs:
       - name: Initialize Capacitor Android
         run: npx cap add android
 
-      - name: Copy Custom Icons to Android Project
+      - name: Force Override All Android Icons
         run: |
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
-          cp -r res/* android/app/src/main/res/
+          # Overwrite every mipmap folder with the custom icons
+          for d in android/app/src/main/res/mipmap-*; do
+            if [ -d "$d" ]; then
+              cp res/$(basename "$d")/* "$d/" 2>/dev/null || true
+            fi
+          done
+          # Also replace any icon in drawable folders
+          cp res/mipmap-xxxhdpi/ic_launcher.png android/app/src/main/res/drawable/ic_launcher_background.png 2>/dev/null || true
+          cp res/mipmap-xxxhdpi/ic_launcher.png android/app/src/main/res/drawable-v24/ic_launcher_foreground.png 2>/dev/null || true
 
       - name: Build Android App (APK)
         run: |
